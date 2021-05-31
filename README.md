@@ -13,7 +13,7 @@ Com a DiPay você movimenta seu dinheiro e faz todos os seus pagamentos de uma m
 
 Certifique que você tenha o Docker instalado em sua maquina e rode os seguintes comandos:
 
--   Primeiro passo clone o projeto:  `https://github.com/diegocandidozup/diPay`
+-   Primeiro passo clone o projeto:  `https://github.com/diegofortunato/diPay`
 -   Entre na pasta raiz no local clonado.
 -   Build o projeto com:  `gradle clean build`
 -   Após o build execute o seguinte comando:  `docker build ./ -t springbootapp`
