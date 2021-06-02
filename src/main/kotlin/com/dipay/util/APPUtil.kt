@@ -15,7 +15,6 @@ import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 import javax.crypto.ShortBufferException
 import javax.crypto.spec.SecretKeySpec
-import kotlin.properties.Delegates
 
 @Component
 object APPUtil {

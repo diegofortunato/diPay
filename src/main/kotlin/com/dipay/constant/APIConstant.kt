@@ -13,6 +13,12 @@ class APIConstant {
 
         const val POST_TRANSACTION_API = "/transaction"
 
+        const val BASE_AUTH_INTEGRATION = "https://run.mocky.io/v3/"
+        const val BASE_NOTIFICATION_INTEGRATION = "http://o4d9z.mocklab.io/"
+
+        const val AUTH_INTEGRATION = "8fafdd68-a090-496f-8c9a-3442cf30dae6"
+        const val NOTIFICATION_INTEGRATION = "notify"
+
         const val ERROR_TRANSACTION_400 = "Ocorreu um erro durante a transação."
         const val ERROR_TRANSACTION_NO_MONEY = "Você não possui saldo sulficiente para completar essa transação."
         const val ERROR_TRANSACTION_NO_SHOPKEEPER = "Lojistas não possuem permissão para enviar dinheiro."

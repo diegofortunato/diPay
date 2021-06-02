@@ -1,5 +1,6 @@
 package com.dipay.config
 
+import com.dipay.constant.APIConstant
 import com.dipay.service.integration.AuthorizationService
 import com.dipay.service.integration.NotificationService
 import okhttp3.OkHttpClient
@@ -16,13 +17,13 @@ class RetrofitConfig {
         .build()
 
     private val retrofitAuth = Retrofit.Builder()
-        .baseUrl("https://run.mocky.io/v3/")
+        .baseUrl(APIConstant.BASE_AUTH_INTEGRATION)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
 
     private val retrofitNotification = Retrofit.Builder()
-        .baseUrl("http://o4d9z.mocklab.io/")
+        .baseUrl(APIConstant.BASE_NOTIFICATION_INTEGRATION)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()

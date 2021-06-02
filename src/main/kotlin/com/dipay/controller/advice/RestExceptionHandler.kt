@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
@@ -94,16 +93,5 @@ class RestExceptionHandler {
         )
         val response = Response(data = errorResponse)
         return ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-
-    fun getErrorsValidation(ex: MethodArgumentNotValidException): ArrayList<String> {
-        val result = ex.bindingResult
-        val fieldErrors = result.fieldErrors
-        val errorsList = ArrayList<String>()
-
-        fieldErrors.forEach {
-            errorsList.add(it.defaultMessage!!)
-        }
-        return errorsList
     }
 }

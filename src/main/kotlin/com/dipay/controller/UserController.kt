@@ -5,7 +5,7 @@ import com.dipay.controller.request.Request
 import com.dipay.controller.response.Response
 import com.dipay.dto.UserDTO
 import com.dipay.service.UserService
-import com.dipay.util.mapper.DTOTOEntityMapper
+import com.dipay.util.extension.DTOTOEntityExtension.toEntity
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -30,7 +30,7 @@ class UserController(private val userService: UserService) {
     fun createUser(@Valid @RequestBody userRequest: Request<UserDTO>): ResponseEntity<Response<UserDTO>> {
         log.info("POST ${APIConstant.POST_USER_API} for user {}", userRequest.request.userFullName)
 
-        val user = userService.createUser(DTOTOEntityMapper.toUserEntity(userRequest.request))
+        val user = userService.createUser(userRequest.request.toEntity())
         return ResponseEntity
             .created(URI.create(URLEncoder.encode(APIConstant.BASE_API + APIConstant.POST_USER_API, "UTF-8")))
             .body(Response(data = user))
@@ -49,7 +49,7 @@ class UserController(private val userService: UserService) {
         ResponseEntity<Response<UserDTO>> {
         log.info("PATCH ${APIConstant.PATCH_USER_API} for ID {}", userRequest.request.userId)
 
-        val user = userService.updateUser(userID, DTOTOEntityMapper.toUserEntity(userRequest.request))
+        val user = userService.updateUser(userID, userRequest.request.toEntity())
         return ResponseEntity.ok(Response(data = user))
     }
 
