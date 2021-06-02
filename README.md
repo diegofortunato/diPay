@@ -1,6 +1,12 @@
-# 						DiPay
+<h1 align="center">
+   💲 <a href="#" alt="site do DiPay"> DiPay </a>
+</h1>
 
-Com a DiPay você movimenta seu dinheiro e faz todos os seus pagamentos de uma maneira simples e rápida.
+<h2 align="center">
+   Com a DiPay você movimenta seu dinheiro e faz todos os seus pagamentos de uma maneira simples e rápida.
+</h2>
+
+
 
 ## [](https://github.com/diegofortunato/xy-inc#stack-)Stack  💻
 
@@ -23,7 +29,7 @@ Pronto, o projeto estara disponivel em:  `localhost:8080`
 
 ## [](https://github.com/diegofortunato/xy-inc#teste-%EF%B8%8F)Teste  ⚙️
 
-Você pode executar em qualquer client HTTP. Uma Collection de exemplo esta disponivel aqui:  [Collection](https://github.com/diegocandidozup/diPay/blob/main/DiPay.postman_collection.json)
+Uma Collection do Postman de exemplo esta disponivel aqui:  [Collection](https://github.com/diegocandidozup/diPay/blob/main/DiPay.postman_collection.json)
 
 
 ## [](https://github.com/diegofortunato/xy-inc#documeta%C3%A7%C3%A3o-)Documetação  📝
