@@ -15,11 +15,15 @@ import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 import javax.crypto.ShortBufferException
 import javax.crypto.spec.SecretKeySpec
+import kotlin.properties.Delegates
 
 @Component
 object APPUtil {
 
     private val log = LoggerFactory.getLogger(javaClass)
+
+    @Value("\${secret.key}")
+    val secretKey: String? = null
 
     @JvmStatic
     fun normalizeFields(fieldName: String): String {
@@ -36,7 +40,7 @@ object APPUtil {
         val keyBytes: ByteArray
 
         try {
-            keyBytes = "secretKey".toByteArray(charset("UTF8"))
+            keyBytes = "ASDFGHJKLASDFGHJ".toByteArray(charset("UTF8"))
             val skey = SecretKeySpec(keyBytes, "AES")
             val input = password.toByteArray(charset("UTF8"))
 

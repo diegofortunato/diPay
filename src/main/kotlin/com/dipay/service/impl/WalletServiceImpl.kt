@@ -21,7 +21,7 @@ class WalletServiceImpl(
     override fun addValueToWallet(walletEntity: WalletEntity): WalletDTO {
         log.info("Add value to wallet service. value={}", walletEntity.walletValue)
 
-        val walletDB = walletRepository.findById(walletEntity.walletId)
+        val walletDB = walletRepository.findByWalletOwnerID(walletEntity.walletOwnerID)
 
         userRepository.findById(walletEntity.walletOwnerID)
             .orElseThrow { EntityNotFoundException("User not Exists") }

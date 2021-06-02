@@ -2,7 +2,9 @@ package com.dipay.service.impl
 
 import com.dipay.dto.UserDTO
 import com.dipay.entity.UserEntity
+import com.dipay.entity.WalletEntity
 import com.dipay.repository.UserRepository
+import com.dipay.repository.WalletRepository
 import com.dipay.service.UserService
 import com.dipay.util.APPUtil
 import com.dipay.util.mapper.EntityToDTOMapper
@@ -13,7 +15,10 @@ import javax.persistence.EntityExistsException
 import javax.persistence.EntityNotFoundException
 
 @Service
-class UserServiceImpl(private val userRepository: UserRepository) : UserService {
+class UserServiceImpl(
+    private val userRepository: UserRepository,
+    private val walletRepository: WalletRepository
+    ) : UserService {
 
     private val log = LoggerFactory.getLogger(javaClass)
 

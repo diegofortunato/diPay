@@ -141,7 +141,7 @@ class UserServiceImplTest {
             "Diego Fortunato",
             "45478963258",
             "diego@email.com",
-            "werewrf645fewrewrewrewv45",
+            "abcd1234",
             UserTypeEnum.COMMOM,
             arrayListOf(),
             arrayListOf(),

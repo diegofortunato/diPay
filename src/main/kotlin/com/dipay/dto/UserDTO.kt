@@ -9,7 +9,7 @@ data class UserDTO(
     val userId: Long,
 
     @JsonProperty("fullName")
-    @field:NotEmpty(message = "Nome completo não pode ser nulo")
+    @NotEmpty(message = "Nome completo não pode ser nulo")
     val userFullName: String,
 
     @JsonProperty("document")

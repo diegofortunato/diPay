@@ -18,7 +18,7 @@ data class WalletEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "wallet_id")
-    val walletId: Long,
+    val walletId: Long?,
 
     @Column(name = "wallet_value")
     var walletValue: Double,

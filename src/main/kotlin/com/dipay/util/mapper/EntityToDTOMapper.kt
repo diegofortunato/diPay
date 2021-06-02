@@ -28,7 +28,7 @@ object EntityToDTOMapper {
 
     fun toWalletDTO(walletEntity: WalletEntity): WalletDTO {
         return WalletDTO(
-            walletEntity.walletId,
+            walletEntity.walletId!!,
             walletEntity.walletValue,
             walletEntity.walletOwnerID
         )

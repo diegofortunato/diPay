@@ -75,7 +75,7 @@ class RestExceptionHandler {
             Instant.now().toString(),
             HttpStatus.PRECONDITION_FAILED.value(),
             APIConstant.ERROR_412,
-            ex.message!!
+            APIConstant.ERROR_412,
         )
         val response = Response(data = errorResponse)
         return ResponseEntity(response, HttpStatus.PRECONDITION_FAILED)
