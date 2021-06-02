@@ -34,7 +34,8 @@ Uma Collection do Postman de exemplo esta disponivel aqui:  [Collection](https:/
 
 ## [](https://github.com/diegofortunato/xy-inc#documeta%C3%A7%C3%A3o-)Documetação  📝
 
-Você pode encontrar a documentação do projeto aqui:  [Doc](http://localhost:8080/v2/api-docs)
+Você pode encontrar a documentação do projeto aqui: [Swagger-UI](http://localhost:8080/swagger-ui.html#/)
+                                                    [Doc](https://github.com/diegofortunato/diPay/blob/master/swagger.yml)
 
 ## [](https://github.com/diegofortunato/xy-inc#autor-)Autor  🦸
 
