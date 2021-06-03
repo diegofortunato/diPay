@@ -30,6 +30,7 @@ dependencies {
 	implementation("com.squareup.retrofit2:converter-gson:2.3.0")
 	implementation("com.squareup.retrofit2:retrofit:2.3.0")
 	implementation("com.squareup.okhttp3:okhttp:3.14.6")
+	implementation("org.mindrot:jbcrypt:0.4")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

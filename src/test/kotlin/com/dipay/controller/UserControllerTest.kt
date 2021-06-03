@@ -5,7 +5,7 @@ import com.dipay.constant.UserTypeEnum
 import com.dipay.dto.UserDTO
 import com.dipay.entity.UserEntity
 import com.dipay.entity.WalletEntity
-import com.dipay.service.UserService
+import com.dipay.service.impl.UserServiceImpl
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -29,7 +29,7 @@ class UserControllerTest {
     private val mvc: MockMvc? = null
 
     @MockBean
-    private val service: UserService? = null
+    private val service: UserServiceImpl? = null
 
     @Test
     fun createUserTest() {

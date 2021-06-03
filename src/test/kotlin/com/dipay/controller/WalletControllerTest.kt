@@ -3,6 +3,7 @@ package com.dipay.controller
 import com.dipay.constant.APIConstant
 import com.dipay.dto.WalletDTO
 import com.dipay.service.WalletService
+import com.dipay.service.impl.WalletServiceImpl
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -25,7 +26,7 @@ class WalletControllerTest {
     private val mvc: MockMvc? = null
 
     @MockBean
-    private val service: WalletService? = null
+    private val service: WalletServiceImpl? = null
 
     @Test
     fun addValueToWalletTest() {
