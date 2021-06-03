@@ -3,6 +3,7 @@ package com.dipay.service
 import com.dipay.constant.UserTypeEnum
 import com.dipay.entity.UserEntity
 import com.dipay.entity.WalletEntity
+import com.dipay.exception.TransactionException
 import com.dipay.repository.UserRepository
 import com.dipay.service.impl.UserServiceImpl
 import org.junit.jupiter.api.Assertions
@@ -135,6 +136,62 @@ class UserServiceImplTest {
         ) { userService!!.deleteUser(1L) }
     }
 
+    @Test
+    fun verifyUserConditionsErrorTest() {
+        val userPayer = getUserShopkeeper()
+        val userPayee = getUserPayee()
+
+        given<Optional<UserEntity>>(userRepository?.findById(3L))
+            .willReturn(Optional.of(userPayer))
+
+        given<Optional<UserEntity>>(userRepository?.findById(2L))
+            .willReturn(Optional.of(userPayee))
+
+        Assertions.assertThrows(
+            TransactionException::class.java
+        ) { userService!!.verifyUserConditions(100.00, 3L, 2L) }
+    }
+
+    @Test
+    fun verifyUserConditionsSucessTest() {
+        val userPayer = getUserPayer()
+        val userPayee = getUserPayee()
+
+        given<Optional<UserEntity>>(userRepository?.findById(1L))
+            .willReturn(Optional.of(userPayer))
+
+        given<Optional<UserEntity>>(userRepository?.findById(2L))
+            .willReturn(Optional.of(userPayee))
+
+        val response = userService!!.verifyUserConditions(100.00, 1L, 2L)
+
+        Assertions.assertNotNull(response)
+        Assertions.assertEquals(response.userPayer!!.userId, 1L)
+        Assertions.assertEquals(response.userPayee!!.userId, 2L)
+    }
+
+    @Test
+    fun verifyUserConditionsUserPayerNotFoundTest() {
+        given<Optional<UserEntity>>(userRepository?.findById(9L))
+            .willReturn(Optional.empty())
+        Assertions.assertThrows(
+            EntityNotFoundException::class.java
+        ) { userService!!.verifyUserConditions(100.00, 9L, 2L) }
+    }
+
+    @Test
+    fun verifyUserConditionsUserPayeeNotFoundTest() {
+        val userPayer = getUserPayer()
+
+        given<Optional<UserEntity>>(userRepository?.findById(1L))
+            .willReturn(Optional.of(userPayer))
+        given<Optional<UserEntity>>(userRepository?.findById(10L))
+            .willReturn(Optional.empty())
+        Assertions.assertThrows(
+            EntityNotFoundException::class.java
+        ) { userService!!.verifyUserConditions(100.00, 1L, 10L) }
+    }
+
     private fun getUser(): UserEntity {
         return UserEntity(
             1L,
@@ -167,6 +224,20 @@ class UserServiceImplTest {
         )
     }
 
+    private fun getUserShopkeeper(): UserEntity {
+        return UserEntity(
+            3L,
+            "Ana Barbosa",
+            "3243253454",
+            "ana@email.com",
+            "5354534543543543543",
+            UserTypeEnum.SHOPKEEPER,
+            arrayListOf(),
+            arrayListOf(),
+            getWallet(3L)
+        )
+    }
+
     private fun getOtherUser(): UserEntity {
         return UserEntity(
             2L,
@@ -178,6 +249,42 @@ class UserServiceImplTest {
             arrayListOf(),
             arrayListOf(),
             null
+        )
+    }
+
+    private fun getUserPayee(): UserEntity {
+        return UserEntity(
+            2L,
+            "Marcos Andrade",
+            "45478234258",
+            "marcos@email.com",
+            "4534egfg443r",
+            UserTypeEnum.SHOPKEEPER,
+            arrayListOf(),
+            arrayListOf(),
+            getWallet(2L)
+        )
+    }
+
+    private fun getUserPayer(): UserEntity {
+        return UserEntity(
+            1L,
+            "Diego Fortunato",
+            "45478963258",
+            "diego@email.com",
+            "werewrf645fewrewrewrewv45",
+            UserTypeEnum.COMMOM,
+            arrayListOf(),
+            arrayListOf(),
+            getWallet(1L)
+        )
+    }
+
+    private fun getWallet(ownerID: Long): WalletEntity {
+        return WalletEntity(
+            1L,
+            100.00,
+            ownerID
         )
     }
 

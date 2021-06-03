@@ -6,18 +6,23 @@ import com.dipay.entity.UserEntity
 import com.dipay.entity.WalletEntity
 import com.dipay.exception.TransactionException
 import com.dipay.repository.TransactionRepository
-import com.dipay.repository.UserRepository
-import com.dipay.repository.WalletRepository
+import com.dipay.service.impl.AuthorizationServiceImpl
+import com.dipay.service.impl.NotificationServiceImpl
 import com.dipay.service.impl.TransactionServiceImpl
+import com.dipay.service.impl.UserServiceImpl
+import com.dipay.service.impl.WalletServiceImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
-import org.springframework.beans.factory.annotation.Autowired
+import org.mockito.BDDMockito.`when`
+import org.mockito.BDDMockito.doNothing
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.Optional
-import javax.persistence.EntityNotFoundException
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -26,119 +31,68 @@ class TransactionServiceImplTest {
     @MockBean
     private val transactionRepository: TransactionRepository? = null
 
-    @MockBean
-    private val userRepository: UserRepository? = null
+    @Mock
+    private val userService: UserServiceImpl? = null
 
-    @MockBean
-    private val walletRepository: WalletRepository? = null
+    @Mock
+    private val walletService: WalletServiceImpl? = null
 
-    @Autowired
-    private val transactioService: TransactionServiceImpl ? = null
+    @Mock
+    private val authService: AuthorizationServiceImpl? = null
+
+    @Mock
+    private val notificationService: NotificationServiceImpl? = null
 
     @Test
-    fun verifyUserConditionsSucessTest() {
-        val userPayer = getUserPayer()
-        val userPayee = getUserPayee()
+    fun performTransactionTest() {
+        `when`(userService!!.verifyUserConditions(50.0, 1, 2)).thenReturn(getTransaction())
 
-        given<Optional<UserEntity>>(userRepository?.findById(1L))
-            .willReturn(Optional.of(userPayer))
+        `when`(walletService!!.verifyWalletPayerValueAvailable(getTransaction())).thenReturn(Optional.of(getWallet(1L)))
 
-        given<Optional<UserEntity>>(userRepository?.findById(2L))
-            .willReturn(Optional.of(userPayee))
+        doNothing().`when`(authService)!!.verifyUserAuth()
 
-        val response = transactioService!!.verifyUserConditions(100.00, 1L, 2L)
+        doNothing().`when`(notificationService)!!.notificationUser()
+
+        `when`(transactionRepository?.save(anyObject())).thenReturn(getTransaction())
+
+        val transactioService = TransactionServiceImpl(transactionRepository!!, walletService, userService, authService!!, notificationService!!)
+
+        val response = transactioService.performTransaction(50.0, 1, 2)
 
         Assertions.assertNotNull(response)
-        Assertions.assertEquals(response.userPayer!!.userId, 1L)
-        Assertions.assertEquals(response.userPayee!!.userId, 2L)
+        Assertions.assertEquals(response.transactionId, 1L)
+        Assertions.assertEquals(response.transactionValue, 50.0)
+        Assertions.assertEquals(response.userPayer, 1)
+        Assertions.assertEquals(response.userPayee, 2)
     }
 
     @Test
-    fun verifyUserConditionsUserPayerNotFoundTest() {
-        given<Optional<UserEntity>>(userRepository?.findById(9L))
-            .willReturn(Optional.empty())
-        Assertions.assertThrows(
-            EntityNotFoundException::class.java
-        ) { transactioService!!.verifyUserConditions(100.00, 9L, 2L) }
-    }
+    fun performTransactionErrorTest() {
+        `when`(userService!!.verifyUserConditions(50.0, 1, 2)).thenReturn(getTransaction())
 
-    @Test
-    fun verifyUserConditionsUserPayeeNotFoundTest() {
-        val userPayer = getUserPayer()
+        `when`(walletService!!.verifyWalletPayerValueAvailable(getTransaction())).thenReturn(Optional.of(getWallet(1L)))
 
-        given<Optional<UserEntity>>(userRepository?.findById(1L))
-            .willReturn(Optional.of(userPayer))
-        given<Optional<UserEntity>>(userRepository?.findById(10L))
-            .willReturn(Optional.empty())
-        Assertions.assertThrows(
-            EntityNotFoundException::class.java
-        ) { transactioService!!.verifyUserConditions(100.00, 1L, 10L) }
-    }
+        doNothing().`when`(authService)!!.verifyUserAuth()
 
-    @Test
-    fun verifyUserConditionsErrorTest() {
-        val userPayer = getUserShopkeeper()
-        val userPayee = getUserPayee()
+        `when`(walletService.debitAndSaveWalletPayerValue(Optional.of(getWallet(1L)), getTransaction()))
+            .thenThrow(RuntimeException::class.java)
 
-        given<Optional<UserEntity>>(userRepository?.findById(3L))
-            .willReturn(Optional.of(userPayer))
-
-        given<Optional<UserEntity>>(userRepository?.findById(2L))
-            .willReturn(Optional.of(userPayee))
+        val transactioService = TransactionServiceImpl(transactionRepository!!, walletService, userService, authService!!, notificationService!!)
 
         Assertions.assertThrows(
-            TransactionException::class.java
-        ) { transactioService!!.verifyUserConditions(100.00, 3L, 2L) }
+            Exception::class.java
+        ) { transactioService.performTransaction(50.0, 1L, 2L) }
+
+        verify(walletService, times(1))!!.reversalAndSaveWalletValue(Optional.of(getWallet(1L)), getTransaction())
     }
 
-    @Test
-    fun verifyWalletPayerValueAvailableTest() {
-        val wallet = getWallet(1L)
-        val transactionEntity = getTransaction()
-
-        given<Optional<WalletEntity>>(walletRepository?.findByWalletOwnerID(1L))
-            .willReturn(Optional.of(wallet))
-
-        val response = transactioService!!.verifyWalletPayerValueAvailable(transactionEntity)
-
-        Assertions.assertNotNull(response)
-        Assertions.assertTrue(response.isPresent)
-        Assertions.assertEquals(response.get().walletOwnerID, 1L)
-    }
-
-    @Test
-    fun verifyWalletPayerValueNotAvailableTest() {
-        val wallet = getWalletInsufficient(1L)
-
-        val transactionEntity = getTransaction()
-
-        given<Optional<WalletEntity>>(walletRepository?.findByWalletOwnerID(1L))
-            .willReturn(Optional.of(wallet))
-
-        Assertions.assertThrows(
-            TransactionException::class.java
-        ) { transactioService!!.verifyWalletPayerValueAvailable(transactionEntity) }
-    }
-
-    @Test
-    fun debitWalletPayerValueSuccessTest() {
-        val value = transactioService!!.debitWalletPayerValue(Optional.of(getWallet(1L)), getTransaction())
-        Assertions.assertNotNull(value)
-        Assertions.assertEquals(value, 50.00)
-    }
-
-    @Test
-    fun creditWalletPayeeValue() {
-        val value = transactioService!!.creditWalletPayeeValue(Optional.of(getWallet(2L)), getTransaction())
-        Assertions.assertNotNull(value)
-        Assertions.assertEquals(value, 150.00)
-    }
-
-    @Test
-    fun reversalWalletValue() {
-        val value = transactioService!!.reversalWalletValue(Optional.of(getWallet(1L)), getTransaction())
-        Assertions.assertNotNull(value)
-        Assertions.assertEquals(value, 150.00)
+    private fun getTransaction(): TransactionEntity {
+        return TransactionEntity(
+            1L,
+            50.00,
+            getUserPayer(),
+            getUserPayee()
+        )
     }
 
     private fun getUserPayer(): UserEntity {
@@ -169,20 +123,6 @@ class TransactionServiceImplTest {
         )
     }
 
-    private fun getUserShopkeeper(): UserEntity {
-        return UserEntity(
-            3L,
-            "Ana Barbosa",
-            "3243253454",
-            "ana@email.com",
-            "5354534543543543543",
-            UserTypeEnum.SHOPKEEPER,
-            arrayListOf(),
-            arrayListOf(),
-            getWallet(3L)
-        )
-    }
-
     private fun getWallet(ownerID: Long): WalletEntity {
         return WalletEntity(
             1L,
@@ -191,20 +131,7 @@ class TransactionServiceImplTest {
         )
     }
 
-    private fun getWalletInsufficient(ownerID: Long): WalletEntity {
-        return WalletEntity(
-            1L,
-            2.00,
-            ownerID
-        )
-    }
-
-    private fun getTransaction(): TransactionEntity {
-        return TransactionEntity(
-            1L,
-            50.00,
-            getUserPayer(),
-            getUserPayee()
-        )
+    private fun <T> anyObject(): T {
+        return Mockito.any()
     }
 }
